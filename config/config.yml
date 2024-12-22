@@ -1,0 +1,10 @@
+db:
+  host: localhost
+  port: 5432
+  name: outer-wilds-db
+  user: user
+  password: password
+env:
+  name: dev
+frontend:
+  url: http://localhost:5173
