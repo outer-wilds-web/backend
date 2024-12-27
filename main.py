@@ -1,16 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-import config.config as config
-from database.script import feed_database
-
 from api.resources import (
     auth_resource,
     user_resource,
-    entreprise_resource,
-    dossier_resource,
-    echantillon_resource,
-    analyse_resource
+    ship_resource
 )
 
 tags_metadata = [
@@ -21,31 +15,17 @@ tags_metadata = [
         "name": "User"
     },
     {
-        "name": "Entreprise"
-    },
-    {
-        "name": "Dossier"
-    },
-    {
-        "name": "Echantillon"
-    },
-    {
-        "name": "Analyse"
+        "name": "Ship"
     }
 ]
 
 app = FastAPI(
-    title="Horus Manager",
+    title="Outer Wilds API",
     openapi_tags=tags_metadata
 )
 
 origins = [
-    "http://localhost:27017",
-    "http://localhost:8081",
-    "https://gehorus-woupyltbaa-nn.a.run.app",
-    "https://horus-334822343093.northamerica-northeast1.run.app",
-    "https://horus-woupyltbaa-nn.a.run.app",
-    "https://horus-visualizer-woupyltbaa-nn.a.run.app"
+ "*"
 ]
 
 app.add_middleware(
@@ -57,15 +37,10 @@ app.add_middleware(
     expose_headers=["Content-Disposition"]
 )
 
-if config.config["env"]["name"] == "dev":
-    feed_database()
-
 app.include_router(auth_resource.router)
 app.include_router(user_resource.router)
-app.include_router(entreprise_resource.router)
-app.include_router(dossier_resource.router)
-app.include_router(echantillon_resource.router)
-app.include_router(analyse_resource.router)
+app.include_router(ship_resource.router)
+
 
 if __name__ == "__main__":
     import uvicorn

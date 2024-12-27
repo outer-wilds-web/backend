@@ -65,8 +65,7 @@ def authenticate_user(email: str, password: str) -> UserOutput:
     user_output: UserOutput = UserOutput(
         id=user.id,
         email=user.email,
-        first_name=user.first_name,
-        last_name=user.last_name,
+        username=user.username,
         roles=user.roles
     )
     return user_output
