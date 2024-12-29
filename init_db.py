@@ -52,6 +52,33 @@ def create_ships_table():
         connection.close()
 
 
+def create_positions_table():
+    connection, cursor = connect_to_db()
+    if connection is None or cursor is None:
+        print("Erreur de connexion à la base de données.")
+        return
+
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS positions (
+        id UUID,
+        x FLOAT,
+        y FLOAT,
+        z FLOAT,
+        time TIMESTAMP
+        PRIMARY KEY (id, time)
+    )
+    """
+    try:
+        cursor.execute(create_table_query)
+        connection.commit()
+        print("Table 'positions' créée avec succès.")
+    except Exception as e:
+        print(f"Erreur lors de la création de la table 'positions': {e}")
+    finally:
+        cursor.close()
+        connection.close()
+
+
 def initialize_db():
     admin_email = "admin@example.com"
     admin_password = "adminpassword"
@@ -72,10 +99,7 @@ def initialize_db():
 
     # Créer l'utilisateur dans la base de données
     created_admin = user_service.create_user(admin_user)
-    user_service.grant_admin(created_admin.id)
-
     print("created_admin: ", created_admin)
-
     # Accorder les droits d'administrateur
     user_service.grant_admin(created_admin.id)
 
@@ -85,4 +109,5 @@ def initialize_db():
 if __name__ == "__main__":
     create_users_table()
     create_ships_table()
+    create_positions_table()
     initialize_db()

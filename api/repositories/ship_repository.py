@@ -3,6 +3,7 @@ from config.config import connect_to_db
 
 connection, cursor = connect_to_db()
 
+
 def create_ship(ship: dict):
     try:
         cursor.execute(
@@ -13,12 +14,12 @@ def create_ship(ship: dict):
             (str(ship['id']), str(ship['owner']))
         )
         connection.commit()
-        print(cursor.rowcount)
-        return cursor.rowcount
+
+        return cursor.rowcount, str(ship['id'])
     except Exception as e:
         print(f"Erreur lors de la création du navire: {e}")
         return None
-    
+
 
 def get_ships():
     try:
@@ -27,7 +28,7 @@ def get_ships():
     except Exception as e:
         print(f"Erreur lors de la récupération des navires: {e}")
         return None
-    
+
 
 def find_ship_by_id(ship_id: UUID):
     try:
@@ -36,9 +37,9 @@ def find_ship_by_id(ship_id: UUID):
     except Exception as e:
         print(f"Erreur lors de la recherche du navire par ID: {e}")
         return None
-    
-    
-def find_ship_by_owner(owner: UUID):
+
+
+def find_ships_by_owner(owner: UUID):
     try:
         cursor.execute("SELECT * FROM ships WHERE owner = %s", (str(owner),))
         return cursor.fetchone()

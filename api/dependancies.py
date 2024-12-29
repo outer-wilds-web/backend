@@ -2,6 +2,7 @@ from fastapi import HTTPException, Request, status
 
 from api.services import auth_service
 
+
 def get_header_token(request: Request) -> str:
     token = request.headers.get("Authorization")
     if not token:
@@ -31,4 +32,3 @@ def allowed_roles(request: Request, allowed_roles: list[str]):
     if not any(role in user.roles for role in allowed_roles):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-

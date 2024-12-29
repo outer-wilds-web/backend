@@ -7,6 +7,8 @@ print("Chargement du fichier de configuration...")
 config = yaml.load(open('config/config.yml', 'r'), Loader=yaml.SafeLoader)
 
 # Se connecter à la base de données
+
+
 def connect_to_db():
     host = config['db']['host']
     port = config['db']['port']

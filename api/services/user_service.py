@@ -19,19 +19,20 @@ def create_user(user: UserForCreate) -> UserOutput:
 
     # Get the user with the id
     user_output: UserOutput = find_user_by_id(user.id)
+
     return user_output
 
 
 def get_users() -> list[UserOutput]:
     users = user_repository.get_users()
-    
+
     users = [{
         'id': UUID(user[0]),
         'email': user[1],
         'username': user[2],
         'roles': user[4]
     } for user in users]
-    
+
     return [UserOutput(
         id=user['id'],
         email=user['email'],
@@ -42,10 +43,10 @@ def get_users() -> list[UserOutput]:
 
 def find_user_by_email(email: str) -> UserOutput:
     result = user_repository.find_user_by_email(email)
-    
+
     if not result:
         return None
-    
+
     result = {
         'id': UUID(result[0]),
         'email': result[1],
@@ -53,7 +54,7 @@ def find_user_by_email(email: str) -> UserOutput:
         'hashed_password': result[3],
         'roles': result[4]
     }
-    
+
     user_output: UserOutput = UserOutput(
         id=result['id'],
         email=result['email'],
@@ -67,7 +68,7 @@ def find_user_by_email_with_hashed_password(email: str) -> User:
     result = user_repository.find_user_by_email(email)
     if not result:
         return None
-    
+
     result = {
         'id': UUID(result[0]),
         'email': result[1],
@@ -75,7 +76,7 @@ def find_user_by_email_with_hashed_password(email: str) -> User:
         'hashed_password': result[3],
         'roles': result[4]
     }
-    
+
     user = User(
         email=result['email'],
         username=result['username'],
@@ -91,7 +92,7 @@ def find_user_by_id(user_id: UUID) -> UserOutput:
     result = user_repository.find_user_by_id(user_id)
     if not result:
         return None
-    
+
     result = {
         'id': UUID(result[0]),
         'email': result[1],
@@ -128,8 +129,8 @@ def grant_admin(user_id: UUID) -> UserOutput:
     user.roles.append("admin")
     modify_count = user_repository.update_user(
         user_id, user.model_dump(by_alias=True))
-
-    return user
+    print("Droit accordé a l'administrateur")
+    return find_user_by_id(user_id)
 
 
 def delete_user(user_id: UUID) -> int:
