@@ -7,7 +7,7 @@ from api.services import auth_service
 
 
 def create_user(user: UserForCreate) -> UserOutput:
-    if find_user_by_email(user.email):
+    if get_user_by_email(user.email):
         raise AlreadyExistsException("User already exists")
 
     user: User = User(
@@ -18,7 +18,7 @@ def create_user(user: UserForCreate) -> UserOutput:
     user_repository.create_user(user.model_dump(by_alias=True))
 
     # Get the user with the id
-    user_output: UserOutput = find_user_by_id(user.id)
+    user_output: UserOutput = get_user_by_id(user.id)
 
     return user_output
 
@@ -41,8 +41,8 @@ def get_users() -> list[UserOutput]:
     ) for user in users]
 
 
-def find_user_by_email(email: str) -> UserOutput:
-    result = user_repository.find_user_by_email(email)
+def get_user_by_email(email: str) -> UserOutput:
+    result = user_repository.get_user_by_email(email)
 
     if not result:
         return None
@@ -64,8 +64,8 @@ def find_user_by_email(email: str) -> UserOutput:
     return user_output
 
 
-def find_user_by_email_with_hashed_password(email: str) -> User:
-    result = user_repository.find_user_by_email(email)
+def get_user_by_email_with_hashed_password(email: str) -> User:
+    result = user_repository.get_user_by_email(email)
     if not result:
         return None
 
@@ -88,8 +88,8 @@ def find_user_by_email_with_hashed_password(email: str) -> User:
     return user
 
 
-def find_user_by_id(user_id: UUID) -> UserOutput:
-    result = user_repository.find_user_by_id(user_id)
+def get_user_by_id(user_id: UUID) -> UserOutput:
+    result = user_repository.get_user_by_id(user_id)
     if not result:
         return None
 
@@ -111,18 +111,18 @@ def find_user_by_id(user_id: UUID) -> UserOutput:
 
 
 def update_user(user_id: UUID, user: UserForUpdate) -> UserOutput:
-    other_user = find_user_by_email(user.email)
+    other_user = get_user_by_email(user.email)
     if other_user and other_user.id != user_id:
         raise AlreadyExistsException("User already exists")
 
     modify_count = user_repository.update_user(
         user_id, user.model_dump(by_alias=True))
 
-    return find_user_by_id(user_id)
+    return get_user_by_id(user_id)
 
 
 def grant_admin(user_id: UUID) -> UserOutput:
-    user = find_user_by_id(user_id)
+    user = get_user_by_id(user_id)
     if not user:
         return None
 
@@ -130,7 +130,7 @@ def grant_admin(user_id: UUID) -> UserOutput:
     modify_count = user_repository.update_user(
         user_id, user.model_dump(by_alias=True))
     print("Droit accordé a l'administrateur")
-    return find_user_by_id(user_id)
+    return get_user_by_id(user_id)
 
 
 def delete_user(user_id: UUID) -> int:

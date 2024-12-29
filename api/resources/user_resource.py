@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from api.dependancies import auth_required, allowed_roles
 from api.exceptions import AlreadyExistsException
 from api.models.User import UserForUpdate, UserOutput
-from api.services import auth_service, user_service
+from api.services import auth_service, user_service, ship_service
 
 
 router = APIRouter(
@@ -30,7 +30,25 @@ def get_user(user_id: UUID, request: Request) -> UserOutput:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
 
-    user = user_service.find_user_by_id(user_id)
+    user = user_service.get_user_by_id(user_id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return user
+
+
+@router.get("/owner/{ship_id}", dependencies=[Depends(auth_required)])
+def get_owner_by_ship_id(ship_id: UUID, request: Request) -> UserOutput:
+
+    user_id = ship_service.get_owner(ship_id)
+
+    current_user = request.state.user
+
+    if current_user.id != user_id and "admin" not in current_user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+
+    user = user_service.get_user_by_id(user_id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found")

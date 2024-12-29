@@ -29,7 +29,7 @@ def get_password_hash(password):
 
 
 def reset_password(userId, old_password, new_password):
-    user: User = user_repository.find_user_by_id(userId)
+    user: User = user_repository.get_user_by_id(userId)
 
     if not verify_password(old_password, user['hashed_password']):
         return False
@@ -56,7 +56,7 @@ def decode_reset_password_token(token: str):
 
 
 def authenticate_user(email: str, password: str) -> UserOutput:
-    user: User = user_service.find_user_by_email_with_hashed_password(
+    user: User = user_service.get_user_by_email_with_hashed_password(
         email)
     if not user:
         return False
@@ -106,7 +106,7 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> UserOutpu
     except JWTError:
         raise credentials_exception
 
-    user_output: UserOutput = user_service.find_user_by_email(
+    user_output: UserOutput = user_service.get_user_by_email(
         email=token_data.email)
     if user_output is None:
         raise credentials_exception

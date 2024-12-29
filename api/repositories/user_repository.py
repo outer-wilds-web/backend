@@ -30,7 +30,7 @@ def get_users():
         return None
 
 
-def find_user_by_email(email: str):
+def get_user_by_email(email: str):
     try:
         cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
         return cursor.fetchone()
@@ -39,7 +39,7 @@ def find_user_by_email(email: str):
         return None
 
 
-def find_user_by_id(user_id: UUID):
+def get_user_by_id(user_id: UUID):
     try:
         cursor.execute("SELECT * FROM users WHERE id = %s", (str(user_id),))
         return cursor.fetchone()

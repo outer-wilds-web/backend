@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from api.models.Ship import Ship, ShipOutput
+from api.models.Ship import Ship, Ship
 from api.models.Position import Position
 from api.repositories import position_repository
 

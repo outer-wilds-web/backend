@@ -52,6 +52,28 @@ def create_ships_table():
         connection.close()
 
 
+def create_planets_table():
+    connection, cursor = connect_to_db()
+    if connection is None or cursor is None:
+        print("Erreur de connexion à la base de données.")
+        return
+
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS planets (
+        id UUID PRIMARY KEY
+    )
+    """
+    try:
+        cursor.execute(create_table_query)
+        connection.commit()
+        print("Table 'planets' créée avec succès.")
+    except Exception as e:
+        print(f"Erreur lors de la création de la table 'planets': {e}")
+    finally:
+        cursor.close()
+        connection.close()
+
+
 def create_positions_table():
     connection, cursor = connect_to_db()
     if connection is None or cursor is None:
@@ -64,7 +86,7 @@ def create_positions_table():
         x FLOAT,
         y FLOAT,
         z FLOAT,
-        time TIMESTAMP
+        time TIMESTAMP,
         PRIMARY KEY (id, time)
     )
     """
@@ -85,7 +107,7 @@ def initialize_db():
     username = "admin"
 
     # Vérifier si l'administrateur existe déjà
-    existing_admin = user_service.find_user_by_email(admin_email)
+    existing_admin = user_service.get_user_by_email(admin_email)
     if existing_admin:
         print("L'administrateur existe déjà.")
         return
@@ -109,5 +131,6 @@ def initialize_db():
 if __name__ == "__main__":
     create_users_table()
     create_ships_table()
+    create_planets_table()
     create_positions_table()
     initialize_db()

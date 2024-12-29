@@ -1,69 +1,60 @@
 from uuid import UUID
 
 from api.exceptions import AlreadyExistsException
-from api.models.Ship import Ship, ShipForCreate, ShipOutput
+from api.models.Ship import Ship, ShipForCreate, Ship
 from api.repositories import ship_repository
 
 
-def create_ship(ship: ShipForCreate) -> ShipOutput:
+def create_ship(ship: ShipForCreate) -> Ship:
     ship: Ship = Ship(
         owner=ship.owner
     )
     _, ship_id = ship_repository.create_ship(ship.model_dump(by_alias=True))
 
     # Get the ship with the id
-    ship_output: ShipOutput = find_ship_by_id(ship_id)
+    ship_output: Ship = get_ship(ship_id)
     return ship_output
 
 
-def get_ships() -> list[ShipOutput]:
+def get_ships() -> list[Ship]:
     ships = ship_repository.get_ships()
 
     if not ships:
         return []
 
-    ships = [{
-        'id': UUID(ship[0]),
-        'owner': UUID(ship[1])
-    } for ship in ships]
-
-    return [ShipOutput(
-        id=ship['id'],
-        owner=ship['owner']
+    return [Ship(
+        id=UUID(ship[0]),
+        owner=UUID(ship[1])
     ) for ship in ships]
 
 
-def find_ships_by_owner(owner: UUID) -> ShipOutput:
-    result = ship_repository.find_ships_by_owner(owner)
+def get_ships_by_owner(owner: UUID) -> Ship:
+    result = ship_repository.get_ships_by_owner(owner)
 
     if not result:
         return None
 
-    result = {
-        'id': UUID(result[0]),
-        'owner': UUID(result[1])
-    }
-
-    ship_output: ShipOutput = ShipOutput(
-        id=result['id'],
-        owner=result['owner']
+    return Ship(
+        id=UUID(result[0]),
+        owner=UUID(result[1])
     )
-    return ship_output
 
 
-def find_ship_by_id(ship_id: UUID) -> ShipOutput:
-    result = ship_repository.find_ship_by_id(ship_id)
+def get_ship(ship_id: UUID) -> Ship:
+    result = ship_repository.get_ship(ship_id)
 
     if not result:
         return None
 
-    result = {
-        'id': UUID(result[0]),
-        'owner': UUID(result[1])
-    }
-
-    ship_output: ShipOutput = ShipOutput(
-        id=result['id'],
-        owner=result['owner']
+    return Ship(
+        id=UUID(result[0]),
+        owner=UUID(result[1])
     )
-    return ship_output
+
+
+def get_owner(ship_id: UUID) -> UUID:
+    owner_id = ship_repository.get_owner(ship_id)[0]
+    if not owner_id:
+        return None
+
+    return UUID(owner_id)

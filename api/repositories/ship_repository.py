@@ -30,7 +30,7 @@ def get_ships():
         return None
 
 
-def find_ship_by_id(ship_id: UUID):
+def get_ship(ship_id: UUID):
     try:
         cursor.execute("SELECT * FROM ships WHERE id = %s", (str(ship_id),))
         return cursor.fetchone()
@@ -39,7 +39,17 @@ def find_ship_by_id(ship_id: UUID):
         return None
 
 
-def find_ships_by_owner(owner: UUID):
+def get_owner(ship_id: UUID):
+    try:
+        cursor.execute("SELECT owner FROM ships WHERE id = %s",
+                       (str(ship_id),))
+        return cursor.fetchone()
+    except Exception as e:
+        print(f"Erreur lors de la recherche du navire par ID: {e}")
+        return None
+
+
+def get_ships_by_owner(owner: UUID):
     try:
         cursor.execute("SELECT * FROM ships WHERE owner = %s", (str(owner),))
         return cursor.fetchone()

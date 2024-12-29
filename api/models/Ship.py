@@ -9,8 +9,3 @@ class Ship(BaseModel):
 
 class ShipForCreate(BaseModel):
     owner: uuid.UUID
-
-
-class ShipOutput(BaseModel):
-    id: uuid.UUID
-    owner: uuid.UUID
