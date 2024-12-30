@@ -81,3 +81,11 @@ def get_all_positions(ids: list[UUID]) -> list[list[Position]]:
 
     # Retourner une liste de listes (chaque sous-liste correspond aux positions d'un ID)
     return [positions for positions in positions_by_id.values()]
+
+
+def add_position(position: Position) -> Position:
+    rows_inserted = position_repository.add_position(position)
+    if rows_inserted == 1:
+        return position
+    else:
+        return None

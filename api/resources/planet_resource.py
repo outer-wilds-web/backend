@@ -21,3 +21,11 @@ def get_planet(planet_id: UUID) -> Planet:
     if not planet:
         raise HTTPException(status_code=404, detail="Planet not found")
     return planet
+
+
+@router.get("/{planet_name}")
+def get_planet_by_name(planet_name: str) -> Planet:
+    planet = planet_service.get_planet_by_name(planet_name)
+    if not planet:
+        raise HTTPException(status_code=404, detail="Planet not found")
+    return planet

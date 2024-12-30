@@ -4,8 +4,8 @@ import uuid
 
 
 class Position(BaseModel):
-    id : uuid.UUID
+    id: uuid.UUID
     x: float
     y: float
     z: float
-    time : datetime
+    time: datetime  # on utilise le timestamp format car il est utiliser dans le kafka et la bdd

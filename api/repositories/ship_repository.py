@@ -17,7 +17,7 @@ def create_ship(ship: dict):
 
         return cursor.rowcount, str(ship['id'])
     except Exception as e:
-        print(f"Erreur lors de la création du navire: {e}")
+        print(f"Erreur lors de la création du vaisseau: {e}")
         return None
 
 
@@ -26,7 +26,7 @@ def get_ships():
         cursor.execute("SELECT * FROM ships")
         return cursor.fetchall()
     except Exception as e:
-        print(f"Erreur lors de la récupération des navires: {e}")
+        print(f"Erreur lors de la récupération des vaisseaux: {e}")
         return None
 
 
@@ -35,7 +35,7 @@ def get_ship(ship_id: UUID):
         cursor.execute("SELECT * FROM ships WHERE id = %s", (str(ship_id),))
         return cursor.fetchone()
     except Exception as e:
-        print(f"Erreur lors de la recherche du navire par ID: {e}")
+        print(f"Erreur lors de la recherche du vaisseau par ID: {e}")
         return None
 
 
@@ -45,7 +45,7 @@ def get_owner(ship_id: UUID):
                        (str(ship_id),))
         return cursor.fetchone()
     except Exception as e:
-        print(f"Erreur lors de la recherche du navire par ID: {e}")
+        print(f"Erreur lors de la recherche du vaisseau par ID: {e}")
         return None
 
 
@@ -54,5 +54,5 @@ def get_ships_by_owner(owner: UUID):
         cursor.execute("SELECT * FROM ships WHERE owner = %s", (str(owner),))
         return cursor.fetchone()
     except Exception as e:
-        print(f"Erreur lors de la recherche du navire par propriétaire: {e}")
+        print(f"Erreur lors de la recherche du vaisseau par propriétaire: {e}")
         return None

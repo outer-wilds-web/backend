@@ -60,7 +60,8 @@ def create_planets_table():
 
     create_table_query = """
     CREATE TABLE IF NOT EXISTS planets (
-        id UUID PRIMARY KEY
+        id UUID PRIMARY KEY,
+        name VARCHAR(255)
     )
     """
     try:
@@ -86,7 +87,7 @@ def create_positions_table():
         x FLOAT,
         y FLOAT,
         z FLOAT,
-        time TIMESTAMP,
+        time TIMESTAMP(3),
         PRIMARY KEY (id, time)
     )
     """

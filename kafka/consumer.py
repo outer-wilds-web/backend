@@ -1,34 +1,75 @@
 from aiokafka import AIOKafkaConsumer
 import asyncio
-import os
+from contextlib import asynccontextmanager
+from config.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC_PLANETS
+from datetime import datetime
 
-# Définition des variables d'environnement
-KAFKA_TOPIC_PLANETS = "planet-positions"  # Remplacez si vous l'avez dans un .env
-KAFKA_TOPIC_SHIPS = "ship-positions"
-KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"  # Remplacez selon votre configuration Kafka
+from api.services import planet_service, position_service
+
+from api.models.Message import Message
+from api.models.Position import Position
 
 
-# Fonction asynchrone pour démarrer le consumer Kafka
-async def consume():
-    # Créez un consumer Kafka
+@asynccontextmanager
+async def kafka_lifespan(app):
+    """
+    Lifespan context manager for Kafka consumer lifecycle.
+    """
     consumer = AIOKafkaConsumer(
         KAFKA_TOPIC_PLANETS,
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
-        group_id=None  # Pas de group_id si vous voulez consommer indépendamment
+        group_id=None
     )
-
-    # Démarre le consumer
     await consumer.start()
+    print(f"Kafka consumer started for topic: {KAFKA_TOPIC_PLANETS}")
+
+    consumer_task = asyncio.create_task(consume_messages(consumer))
+
     try:
-        print(f"Consuming messages from topic: {KAFKA_TOPIC_PLANETS}")
-        # Consommer les messages en boucle
-        async for msg in consumer:
-            print(f"Message reçu: {msg.value.decode('utf-8')}")  # Decodez si nécessaire
+        yield
     finally:
-        # Arrêtez le consumer proprement
+        consumer_task.cancel()
+        try:
+            await consumer_task
+        except asyncio.CancelledError:
+            print("Consumer task cancelled.")
         await consumer.stop()
+        print("Kafka consumer stopped.")
 
 
-# Création de la boucle d'événements asyncio et exécution du consumer
-loop = asyncio.get_event_loop()
-loop.run_until_complete(consume())
+async def consume_messages(consumer):
+    """
+    Asynchronous function to consume messages from Kafka.
+    """
+    try:
+        async for msg in consumer:
+
+            # Décoder le message
+            message_value = msg.value.decode('utf-8')
+
+            # Convertir en instance de modèle Pydantic
+            message: Message = Message.model_validate_json(message_value)
+            id = None
+            if message.type_object == "planet":
+                planet = planet_service.get_planet_by_name(message.name)
+                if not planet:
+                    planet = planet_service.create(message.name)
+                id = planet.id
+
+            if message.type_object == "ship":
+                pass
+            if id:
+                position_time = datetime.fromtimestamp(
+                    message.timestamp / 1000.0)
+                position = Position(
+                    id=id,
+                    x=message.x,
+                    y=message.y,
+                    z=message.z,
+                    time=position_time
+                )
+                position_service.add_position(position)
+
+    except asyncio.CancelledError:
+        print("Message consumption cancelled.")
+        raise

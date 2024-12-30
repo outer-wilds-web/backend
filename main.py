@@ -1,14 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import asyncio
+from kafka.consumer import kafka_lifespan
+
 
 from api.resources import (
     auth_resource,
     user_resource,
     ship_resource
 )
-
-from kafka.consumer import start_consumer
 
 tags_metadata = [
     {
@@ -44,37 +43,8 @@ app.include_router(auth_resource.router)
 app.include_router(user_resource.router)
 app.include_router(ship_resource.router)
 
-
-# Global task variable to manage the Kafka consumer task
-consumer_task = None
-
-
-@app.on_event("startup")
-async def startup_event():
-    """
-    Event triggered when the application starts.
-    Initializes the Kafka consumer as a background task.
-    """
-    global consumer_task
-    consumer_task = asyncio.create_task(start_consumer())
-    print("Kafka consumer task created during startup.")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """
-    Event triggered when the application shuts down.
-    Cancels the Kafka consumer background task.
-    """
-    global consumer_task
-    if consumer_task:
-        consumer_task.cancel()
-        try:
-            await consumer_task
-        except asyncio.CancelledError:
-            print("Kafka consumer task was cancelled.")
-        print("Kafka consumer task stopped during shutdown.")
-
+# Intégration du consommateur Kafka dans le cycle de vie de l'application
+app.router.lifespan_context = kafka_lifespan
 
 if __name__ == "__main__":
     import uvicorn
