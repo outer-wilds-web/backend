@@ -1,7 +1,7 @@
 from aiokafka import AIOKafkaConsumer
 import asyncio
 from contextlib import asynccontextmanager
-from config.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC_PLANETS
+from config.config import KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC_PLANETS, KAFKA_TOPIC_SHIPS
 from datetime import datetime
 
 from api.services import planet_service, position_service
@@ -16,7 +16,7 @@ async def kafka_lifespan(app):
     Lifespan context manager for Kafka consumer lifecycle.
     """
     consumer = AIOKafkaConsumer(
-        KAFKA_TOPIC_PLANETS,
+        *[KAFKA_TOPIC_PLANETS, KAFKA_TOPIC_SHIPS],
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
         group_id=None
     )
