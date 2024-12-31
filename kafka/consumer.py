@@ -34,8 +34,7 @@ async def kafka_lifespan(app):
         group_id=None
     )
     await consumer.start()
-    logger.info(f"Kafka consumer started for topics: {
-                KAFKA_TOPIC_PLANETS}, {KAFKA_TOPIC_SHIPS}")
+    logger.info(f"Kafka consumer started for topics: {KAFKA_TOPIC_PLANETS}, {KAFKA_TOPIC_SHIPS}")
 
     # Create a task to consume messages
     consumer_task = asyncio.create_task(consume_messages(consumer))
@@ -86,8 +85,7 @@ async def consume_messages(consumer):
                     # Retrieve a ship by its name, raising an error if not found
                     ship = ship_service.get_ship_by_name(message.name)
                     if not ship:
-                        logger.error(f"Ship not found for name: {
-                                     message.name}")
+                        logger.error(f"Ship not found for name: {message.name}")
                         raise ValueError(f"Ship not found: {message.name}")
                     id = ship.id
 
@@ -106,15 +104,13 @@ async def consume_messages(consumer):
 
             except ValidationError as ve:
                 # Log validation errors for invalid messages
-                logger.error(f"Validation error for message: {
-                             msg.value}, error: {ve}")
+                logger.error(f"Validation error for message: {msg.value}, error: {ve}")
             except ValueError as ve:
                 # Log value errors for missing or invalid entities
                 logger.error(f"Value error: {ve}")
             except Exception as e:
                 # Log unexpected errors during message processing
-                logger.exception(f"Unexpected error processing message: {
-                                 msg.value}, error: {e}")
+                logger.exception(f"Unexpected error processing message: {msg.value}, error: {e}")
 
     except asyncio.CancelledError:
         # Log when the task is cancelled

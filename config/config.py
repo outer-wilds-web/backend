@@ -14,8 +14,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = config["token"]["access_token_expire_minutes"]
 
 
 # Kafka configuration
-KAFKA_BOOTSTRAP_SERVERS = f"{
-    config['kafka']['host']}:{config['kafka']['port']}"
+KAFKA_BOOTSTRAP_SERVERS = f"{config['kafka']['host']}:{config['kafka']['port']}"
 KAFKA_TOPIC_PLANETS = config['kafka']['topic']['planets']
 KAFKA_TOPIC_SHIPS = config['kafka']['topic']['ships']
 
