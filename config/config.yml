@@ -14,3 +14,9 @@ kafka:
   topic:
     planets: planet-positions
     ships: ship-positions
+logging:
+  level: ERROR
+token:
+  secret_key: 5e1fc44a970f7c27d0b1ad5956053840c628cc2c731e3eb5ea67df02ddf6af28
+  algorithm: HS256
+  access_token_expire_minutes: 15 

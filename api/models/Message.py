@@ -1,8 +1,8 @@
 from pydantic import BaseModel
-from typing import Optional
 
 
 class Message(BaseModel):
+    """Represents a Kafka message with object type, coordinates, and timestamp."""
     type_object: str
     name: str
     x: float

@@ -4,8 +4,9 @@ import uuid
 
 
 class Position(BaseModel):
+    """Represents a position with coordinates and timestamp in ms."""
     id: uuid.UUID
     x: float
     y: float
     z: float
-    time: datetime  # on utilise le timestamp format car il est utiliser dans le kafka et la bdd
+    time: datetime

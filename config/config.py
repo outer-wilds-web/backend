@@ -1,23 +1,46 @@
 import yaml
 import psycopg2
+import logging
 
-print("Chargement du fichier de configuration...")
-# A ajouter au fichier de config
+print("Loading configuration file...")
 
-
-# Charger le fichier de configuration
+# Load the configuration file
 config = yaml.load(open('config/config.yml', 'r'), Loader=yaml.SafeLoader)
 
-# config kafka
-KAFKA_BOOTSTRAP_SERVERS = config['kafka']['host'] + \
-    ":" + str(config['kafka']['port'])
+# Configure authification token
+SECRET_KEY = config["token"]["secret_key"]
+ALGORITHM = config["token"]["algorithm"]
+ACCESS_TOKEN_EXPIRE_MINUTES = config["token"]["access_token_expire_minutes"]
+
+
+# Kafka configuration
+KAFKA_BOOTSTRAP_SERVERS = f"{
+    config['kafka']['host']}:{config['kafka']['port']}"
 KAFKA_TOPIC_PLANETS = config['kafka']['topic']['planets']
 KAFKA_TOPIC_SHIPS = config['kafka']['topic']['ships']
 
-# Se connecter à la base de données
+
+# Configure logging
+def get_logger():
+    logging_level = config.get('logging', {}).get('level', 'INFO').upper()
+    logging.basicConfig(
+        level=logging_level,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    logger = logging.getLogger(__name__)
+    return logger
 
 
+logger = get_logger()
+
+
+# Connect to the database
 def connect_to_db():
+    """Connect to the database using configuration from the YAML file.
+
+    Returns:
+        tuple: A tuple containing the database connection and cursor, or (None, None) on failure.
+    """
     host = config['db']['host']
     port = config['db']['port']
     user = config['db']['user']
@@ -32,8 +55,8 @@ def connect_to_db():
             dbname=dbname
         )
         cursor = connection.cursor()
-        print("Connexion à la base de données réussie")
+        logger.info("Database connection successful.")
         return connection, cursor
     except Exception as e:
-        print(f"Erreur lors de la connexion à la base de données: {e}")
+        logger.error(f"Error connecting to the database: {e}")
         return None, None

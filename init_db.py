@@ -1,12 +1,15 @@
-from config.config import connect_to_db
+from config.config import connect_to_db, get_logger
 from api.services import user_service
 from api.models.User import UserForCreate
 
+logger = get_logger()
+
 
 def create_users_table():
+    """Create the 'users' table in the database if it doesn't exist."""
     connection, cursor = connect_to_db()
     if connection is None or cursor is None:
-        print("Erreur de connexion à la base de données.")
+        logger.error("Failed to connect to the database.")
         return
 
     create_table_query = """
@@ -21,18 +24,19 @@ def create_users_table():
     try:
         cursor.execute(create_table_query)
         connection.commit()
-        print("Table 'users' créée avec succès.")
+        logger.info("'users' table created successfully.")
     except Exception as e:
-        print(f"Erreur lors de la création de la table 'users': {e}")
+        logger.exception("Error creating 'users' table: %s", e)
     finally:
         cursor.close()
         connection.close()
 
 
 def create_ships_table():
+    """Create the 'ships' table in the database if it doesn't exist."""
     connection, cursor = connect_to_db()
     if connection is None or cursor is None:
-        print("Erreur de connexion à la base de données.")
+        logger.error("Failed to connect to the database.")
         return
 
     create_table_query = """
@@ -45,18 +49,19 @@ def create_ships_table():
     try:
         cursor.execute(create_table_query)
         connection.commit()
-        print("Table 'ships' créée avec succès.")
+        logger.info("'ships' table created successfully.")
     except Exception as e:
-        print(f"Erreur lors de la création de la table 'ships': {e}")
+        logger.exception("Error creating 'ships' table: %s", e)
     finally:
         cursor.close()
         connection.close()
 
 
 def create_planets_table():
+    """Create the 'planets' table in the database if it doesn't exist."""
     connection, cursor = connect_to_db()
     if connection is None or cursor is None:
-        print("Erreur de connexion à la base de données.")
+        logger.error("Failed to connect to the database.")
         return
 
     create_table_query = """
@@ -68,18 +73,19 @@ def create_planets_table():
     try:
         cursor.execute(create_table_query)
         connection.commit()
-        print("Table 'planets' créée avec succès.")
+        logger.info("'planets' table created successfully.")
     except Exception as e:
-        print(f"Erreur lors de la création de la table 'planets': {e}")
+        logger.exception("Error creating 'planets' table: %s", e)
     finally:
         cursor.close()
         connection.close()
 
 
 def create_positions_table():
+    """Create the 'positions' table in the database if it doesn't exist."""
     connection, cursor = connect_to_db()
     if connection is None or cursor is None:
-        print("Erreur de connexion à la base de données.")
+        logger.error("Failed to connect to the database.")
         return
 
     create_table_query = """
@@ -95,39 +101,42 @@ def create_positions_table():
     try:
         cursor.execute(create_table_query)
         connection.commit()
-        print("Table 'positions' créée avec succès.")
+        logger.info("'positions' table created successfully.")
     except Exception as e:
-        print(f"Erreur lors de la création de la table 'positions': {e}")
+        logger.exception("Error creating 'positions' table: %s", e)
     finally:
         cursor.close()
         connection.close()
 
 
 def initialize_db():
+    """Initialize the database with an admin user if not already present."""
     admin_email = "admin@example.com"
     admin_password = "adminpassword"
     username = "admin"
 
-    # Vérifier si l'administrateur existe déjà
+    # Check if the admin user already exists
     existing_admin = user_service.get_user_by_email(admin_email)
     if existing_admin:
-        print("L'administrateur existe déjà.")
+        logger.info("Admin user already exists.")
         return
 
-    # Créer un nouvel utilisateur administrateur
+    # Create a new admin user
     admin_user = UserForCreate(
         email=admin_email,
         password=admin_password,
         username=username
     )
 
-    # Créer l'utilisateur dans la base de données
-    created_admin = user_service.create_user(admin_user)
-    print("created_admin: ", created_admin)
-    # Accorder les droits d'administrateur
-    user_service.grant_admin(created_admin.id)
-
-    print("Administrateur créé avec succès.")
+    # Add the admin user to the database
+    try:
+        created_admin = user_service.create_user(admin_user)
+        logger.info("Admin user created successfully: %s", created_admin)
+        # Grant admin rights
+        user_service.grant_admin(created_admin.id)
+        logger.info("Admin rights granted successfully.")
+    except Exception as e:
+        logger.exception("Error initializing admin user: %s", e)
 
 
 if __name__ == "__main__":
