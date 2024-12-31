@@ -100,7 +100,7 @@ async def register_user(
         logger.warning(
             "Registration failed, user already exists: %s", user.email)
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_409_CONFLICT,
             detail=str(e),
             headers={"WWW-Authenticate": "Bearer"},
         )

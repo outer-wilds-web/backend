@@ -22,7 +22,7 @@ KAFKA_TOPIC_SHIPS = config['kafka']['topic']['ships']
 
 # Configure logging
 def get_logger():
-    logging_level = config.get('logging', {}).get('level', 'INFO').upper()
+    logging_level = config.get('logger', {}).get('level', 'INFO').upper()
     logging.basicConfig(
         level=logging_level,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
