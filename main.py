@@ -6,7 +6,8 @@ from kafka.consumer import kafka_lifespan
 from api.resources import (
     auth_resource,
     user_resource,
-    ship_resource
+    ship_resource,
+    planet_resource
 )
 
 tags_metadata = [
@@ -18,7 +19,11 @@ tags_metadata = [
     },
     {
         "name": "Ship"
+    },
+    {
+        "name": "Planet"
     }
+
 ]
 
 app = FastAPI(
@@ -39,9 +44,17 @@ app.add_middleware(
     expose_headers=["Content-Disposition"]
 )
 
+
+# Route "ping" pour vérifier l'état de l'API
+@app.get("/ping", tags=["Health"])
+async def ping():
+    return {"message": "up"}
+
 app.include_router(auth_resource.router)
 app.include_router(user_resource.router)
 app.include_router(ship_resource.router)
+app.include_router(planet_resource.router)
+
 
 # Intégration du consommateur Kafka dans le cycle de vie de l'application
 app.router.lifespan_context = kafka_lifespan

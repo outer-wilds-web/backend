@@ -11,6 +11,7 @@ def get_header_token(request: Request) -> str:
             detail="Token is missing",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    print(token)
     return token.split("Bearer ")[1]
 
 

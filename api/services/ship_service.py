@@ -6,8 +6,12 @@ from api.repositories import ship_repository
 
 
 def create_ship(ship: ShipForCreate) -> Ship:
+    if get_ship_by_name(ship.name):
+        raise AlreadyExistsException("Ship already exists")
+
     ship: Ship = Ship(
-        owner=ship.owner
+        owner=ship.owner,
+        name=ship.name
     )
     _, ship_id = ship_repository.create_ship(ship.model_dump(by_alias=True))
 
@@ -24,20 +28,9 @@ def get_ships() -> list[Ship]:
 
     return [Ship(
         id=UUID(ship[0]),
-        owner=UUID(ship[1])
+        owner=UUID(ship[1]),
+        name=str(ship[2])
     ) for ship in ships]
-
-
-def get_ships_by_owner(owner: UUID) -> Ship:
-    result = ship_repository.get_ships_by_owner(owner)
-
-    if not result:
-        return None
-
-    return Ship(
-        id=UUID(result[0]),
-        owner=UUID(result[1])
-    )
 
 
 def get_ship(ship_id: UUID) -> Ship:
@@ -48,7 +41,34 @@ def get_ship(ship_id: UUID) -> Ship:
 
     return Ship(
         id=UUID(result[0]),
-        owner=UUID(result[1])
+        owner=UUID(result[1]),
+        name=str(result[2])
+    )
+
+
+def get_ship_by_name(ship_name: str) -> Ship:
+    result = ship_repository.get_ship_by_name(ship_name)
+
+    if not result:
+        return None
+
+    return Ship(
+        id=UUID(result[0]),
+        owner=UUID(result[1]),
+        name=str(result[2])
+    )
+
+
+def get_ships_by_owner(owner: UUID) -> Ship:
+    result = ship_repository.get_ships_by_owner(owner)
+
+    if not result:
+        return None
+
+    return Ship(
+        id=UUID(result[0]),
+        owner=UUID(result[1]),
+        name=str(result[2])
     )
 
 

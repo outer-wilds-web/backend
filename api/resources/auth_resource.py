@@ -42,7 +42,7 @@ async def login_for_access_token(
     access_token = auth_service.create_access_token(
         data={"sub": user_output.email}, expires_delta=access_token_expires
     )
-    return UserData(token=Token(access_token=access_token, token_type="bearer"), user=user_output)
+    return UserData(token=Token(access_token=access_token, token_type="Bearer"), user=user_output)
 
 
 @router.post("/register")
@@ -69,4 +69,4 @@ async def register_user(
     access_token = auth_service.create_access_token(
         data={"sub": user_output.email}, expires_delta=access_token_expires
     )
-    return UserData(token=Token(access_token=access_token, token_type="bearer"), user=user_output)
+    return UserData(token=Token(access_token=access_token, token_type="Bearer"), user=user_output)

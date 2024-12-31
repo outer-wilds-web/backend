@@ -38,7 +38,8 @@ def create_ships_table():
     create_table_query = """
     CREATE TABLE IF NOT EXISTS ships (
         id UUID PRIMARY KEY,
-        owner UUID
+        owner UUID,
+        name VARCHAR(255)
     )
     """
     try:

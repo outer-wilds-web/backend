@@ -56,8 +56,9 @@ async def consume_messages(consumer):
                     planet = planet_service.create(message.name)
                 id = planet.id
 
+            print(message)
             if message.type_object == "ship":
-                pass
+                print("test")
             if id:
                 position_time = datetime.fromtimestamp(
                     message.timestamp / 1000.0)

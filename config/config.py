@@ -3,12 +3,16 @@ import psycopg2
 
 print("Chargement du fichier de configuration...")
 # A ajouter au fichier de config
-KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
-KAFKA_TOPIC_PLANETS = "planet-positions"
-KAFKA_TOPIC_SHIPS = "ship-positions"
+
 
 # Charger le fichier de configuration
 config = yaml.load(open('config/config.yml', 'r'), Loader=yaml.SafeLoader)
+
+# config kafka
+KAFKA_BOOTSTRAP_SERVERS = config['kafka']['host'] + \
+    ":" + str(config['kafka']['port'])
+KAFKA_TOPIC_PLANETS = config['kafka']['topic']['planets']
+KAFKA_TOPIC_SHIPS = config['kafka']['topic']['ships']
 
 # Se connecter à la base de données
 

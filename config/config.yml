@@ -8,3 +8,9 @@ env:
   name: dev
 frontend:
   url: http://localhost:5173
+kafka:
+  host: localhost
+  port: 9092
+  topic:
+    planets: planet-positions
+    ships: ship-positions

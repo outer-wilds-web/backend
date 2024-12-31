@@ -8,10 +8,10 @@ def create_ship(ship: dict):
     try:
         cursor.execute(
             """
-            INSERT INTO ships (id, owner)
-            VALUES (%s, %s)
+            INSERT INTO ships (id, owner, name)
+            VALUES (%s, %s, %s)
             """,
-            (str(ship['id']), str(ship['owner']))
+            (str(ship['id']), str(ship['owner']), str(ship['name']))
         )
         connection.commit()
 
@@ -33,6 +33,16 @@ def get_ships():
 def get_ship(ship_id: UUID):
     try:
         cursor.execute("SELECT * FROM ships WHERE id = %s", (str(ship_id),))
+        return cursor.fetchone()
+    except Exception as e:
+        print(f"Erreur lors de la recherche du vaisseau par ID: {e}")
+        return None
+
+
+def get_ship_by_name(ship_name):
+    try:
+        cursor.execute("SELECT * FROM ships WHERE name = %s",
+                       (str(ship_name),))
         return cursor.fetchone()
     except Exception as e:
         print(f"Erreur lors de la recherche du vaisseau par ID: {e}")
