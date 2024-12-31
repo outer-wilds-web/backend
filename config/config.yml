@@ -1,22 +1,20 @@
 db:
-  host: localhost
-  port: 5432
-  name: outer-wilds-db
-  user: user
-  password: password
+  host: ${DB_HOST:-localhost}
+  port: ${DB_PORT:-5432}
+  name: ${DB_NAME:-outer-wilds-db}
+  user: ${DB_USER:-user}
+  password: ${DB_PASSWORD:-password}
 env:
-  name: dev
-frontend:
-  url: http://localhost:5173
+  name: ${ENV_NAME:-dev}
 kafka:
-  host: localhost
-  port: 9092
+  host: ${KAFKA_HOST:-localhost}
+  port: ${KAFKA_PORT:-9092}
   topic:
-    planets: planet-positions
-    ships: ship-positions
+    planets: ${KAFKA_TOPIC_PLANETS:-planet-positions}
+    ships: ${KAFKA_TOPIC_SHIPS:-ship-positions}
 logger:
-  level: ERROR
+  level: ${LOGGER_LEVEL:-ERROR}
 token:
-  secret_key: 5e1fc44a970f7c27d0b1ad5956053840c628cc2c731e3eb5ea67df02ddf6af28
-  algorithm: HS256
-  access_token_expire_minutes: 15 
+  secret_key: ${TOKEN_SECRET_KEY:-5e1fc44a970f7c27d0b1ad5956053840c628cc2c731e3eb5ea67df02ddf6af28}
+  algorithm: ${TOKEN_ALGORITHM:-HS256}
+  access_token_expire_minutes: ${TOKEN_EXPIRE_MINUTES:-15}
